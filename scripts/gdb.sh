@@ -1,3 +1,3 @@
 #!/bin/bash
 
-cgdb $SNET_ROOT/build/snet
+cgdb $MODCPP_ROOT/build/modcpp

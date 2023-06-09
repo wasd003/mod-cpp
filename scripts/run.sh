@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cd $SNET_ROOT
+cd $MODCPP_ROOT
 
-./build/snet
+./build/modcpp

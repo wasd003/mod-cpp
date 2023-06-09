@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd $SNET_ROOT
+cd $MODCPP_ROOT
 
 BUILD_LEVEL=$1
 

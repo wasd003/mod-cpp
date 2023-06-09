@@ -1,7 +1,19 @@
-#include <snet/log.h>
+#include <modcpp/base.h>
+
+void misc_routine();
+void auto_routine();
+void template_routine();
+void oo_routine();
+void rvalue_routine();
 
 int main() {
-    log("nothing\n");
-    log("nothing:%d\n", 1);
-    return 0;
+    misc_routine();
+
+    auto_routine();
+
+    template_routine();
+
+    oo_routine();
+
+    rvalue_routine();
 }

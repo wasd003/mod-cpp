@@ -8,3 +8,5 @@
 #else
 #define log(fmt, args...) do {} while (0)
 #endif
+
+#define trace(...) printf("------ %s ------\n", __func__);

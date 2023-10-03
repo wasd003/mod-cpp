@@ -5,6 +5,8 @@ void auto_routine();
 void template_routine();
 void oo_routine();
 void rvalue_routine();
+void lockless_stack_routine();
+void lockless_queue_routine();
 
 int main() {
     misc_routine();
@@ -16,4 +18,6 @@ int main() {
     oo_routine();
 
     rvalue_routine();
+    
+    lockless_stack_routine();
 }

@@ -30,7 +30,7 @@ public:
                     std::atomic_load(&old_node->next)));
         if (old_node) {
             // TODO: is it necessary?
-            std::atomic_store(&old_head->next,std::shared_ptr<node>());
+            std::atomic_store(&old_node->next,std::shared_ptr<node>());
             return old_node->data;
         } else {
             return std::make_shared<T>();

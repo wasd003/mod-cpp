@@ -7,6 +7,7 @@ void oo_routine();
 void rvalue_routine();
 void lockless_stack_routine();
 void future_routine();
+void operator_rountine();
 
 int main() {
 #if 0
@@ -21,7 +22,8 @@ int main() {
     rvalue_routine();
     
     lockless_stack_routine();
-#endif
 
     future_routine();
+#endif
+    operator_rountine();
 }

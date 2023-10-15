@@ -8,11 +8,14 @@ void rvalue_routine();
 void lockless_stack_routine();
 void future_routine();
 void operator_rountine();
+void smart_pointer_routine();
 
 int main() {
+
+    smart_pointer_routine();
+#if 0
     template_routine();
 
-#if 0
     misc_routine();
 
     auto_routine();

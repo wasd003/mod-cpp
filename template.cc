@@ -37,10 +37,29 @@ void speak() {
 void non_type_template() {
     speak<100>();
 }
+
+template<typename... Ts>
+void fold_print(const Ts&... args) {
+    ((std::cout << args << " "), ...);
+}
+
+template<typename Ta, typename... Tb>
+decltype(auto) fold_sum(const Ta& first, const Tb&... args) {
+    return (first + ... + args);
+}
+
+void template_fold() {
+    auto ans = fold_sum(1, 2, 3.5);
+    std::cout << ans << std::endl;
+    fold_print("chs", 2, 3);
+}
+
 void template_routine() {
     template_alias();
 
     variadic_template();
 
     non_type_template();
+
+    template_fold();
 }

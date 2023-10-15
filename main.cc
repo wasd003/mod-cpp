@@ -10,12 +10,13 @@ void future_routine();
 void operator_rountine();
 
 int main() {
+    template_routine();
+
 #if 0
     misc_routine();
 
     auto_routine();
 
-    template_routine();
 
     oo_routine();
 
@@ -24,6 +25,7 @@ int main() {
     lockless_stack_routine();
 
     future_routine();
-#endif
+
     operator_rountine();
+#endif
 }

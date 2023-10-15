@@ -9,11 +9,13 @@ void lockless_stack_routine();
 void future_routine();
 void operator_rountine();
 void smart_pointer_routine();
+void lambda_routine();
 
 int main() {
 
-    smart_pointer_routine();
 #if 0
+    smart_pointer_routine();
+
     template_routine();
 
     misc_routine();
@@ -31,4 +33,6 @@ int main() {
 
     operator_rountine();
 #endif
+
+    lambda_routine();
 }

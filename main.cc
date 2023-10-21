@@ -22,7 +22,6 @@ int main() {
 
     auto_routine();
 
-
     oo_routine();
 
     rvalue_routine();
@@ -31,8 +30,7 @@ int main() {
 
     future_routine();
 
-    operator_rountine();
-#endif
-
     lambda_routine();
+#endif
+    operator_rountine();
 }

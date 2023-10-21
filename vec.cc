@@ -86,7 +86,7 @@ public:
     }
 };
 
-int main() {
+void vec_routine() {
     const int N = 8;
     vec<test_struct, N> my_vec;
     for (int i = 0; i < 3 * N; i ++ ) {

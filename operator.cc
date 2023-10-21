@@ -20,9 +20,20 @@
 
 using namespace std;
 
+class B {
+private:
+    int data;
+public:
+    B() : data(0) {}
+    void foo() {
+        cout << "data: " << data << endl;
+    }
+};
+
 class A {
 private:
     int a, b, c;
+    B obj;
 
 public:
     A() = default;
@@ -72,6 +83,11 @@ public:
         return res;
     }
 
+    // ->
+    B* operator->() {
+        return &obj;
+    }
+
     // <<
     friend ostream& operator<<(ostream& os, const A& rhs) {
         os << rhs.a << " " << rhs.b << " " << rhs.c;
@@ -83,5 +99,6 @@ public:
 void operator_rountine() {
     A a {1, 2, 3}, b {4, 5, 6};
     auto c = a + b;
-    cout << c << endl;
+    c->foo();
+    /* cout << c << endl; */
 }               

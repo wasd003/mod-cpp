@@ -83,6 +83,7 @@ public:
         return res;
     }
 
+    // x * y
     A operator* (const A& rhs) const {
         auto res = *this;
         res.a *= rhs.a;
@@ -96,6 +97,7 @@ public:
         return &obj;
     }
 
+    // *
     int operator*() {
         return a + b + c;
     }

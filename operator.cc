@@ -83,9 +83,21 @@ public:
         return res;
     }
 
+    A operator* (const A& rhs) const {
+        auto res = *this;
+        res.a *= rhs.a;
+        res.b *= rhs.b;
+        res.c *= rhs.c;
+        return res;
+    }
+
     // ->
     B* operator->() {
         return &obj;
+    }
+
+    int operator*() {
+        return a + b + c;
     }
 
     // <<
@@ -99,6 +111,8 @@ public:
 void operator_rountine() {
     A a {1, 2, 3}, b {4, 5, 6};
     auto c = a + b;
-    c->foo();
+    cout << *c << endl;
+    auto d = a * b;
+    cout << d << endl;
     /* cout << c << endl; */
 }               

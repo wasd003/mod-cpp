@@ -10,6 +10,7 @@ void future_routine();
 void operator_rountine();
 void smart_pointer_routine();
 void lambda_routine();
+void test_rng();
 
 int main() {
 
@@ -31,6 +32,8 @@ int main() {
     future_routine();
 
     lambda_routine();
-#endif
+
     operator_rountine();
+#endif
+    test_rng();
 }

@@ -11,6 +11,7 @@ void operator_rountine();
 void smart_pointer_routine();
 void lambda_routine();
 void test_rng();
+void coro_main();
 
 int main() {
 
@@ -35,5 +36,5 @@ int main() {
 
     operator_rountine();
 #endif
-    test_rng();
+    coro_main();
 }

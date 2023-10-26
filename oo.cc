@@ -137,6 +137,38 @@ void reference_qualifier() {
     A data = widget().get_data();
 }
 
+class B : public A {
+private:
+    int a, b, c;
+
+public:
+    B(int a, int b, int c) : A(), a(a), b(b), c(c) {}
+
+    B& operator=(const B& rhs) {
+        if (this == &rhs) [[unlikely]] {
+            return *this;
+        }
+        A::operator=(rhs);
+        a = rhs.a;
+        b = rhs.b;
+        c = rhs.c;
+        return *this;
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const B& rhs) {
+        os << rhs.a << " " << rhs.b << " " << rhs.c;
+        return os;
+    }
+};
+
+void derived_assignment_operator() {
+    B b1(1, 2, 3);
+    B b2(2, 3, 4);
+    std::cout << b1 << std::endl;
+    b1 = b2;
+    std::cout << b1 << std::endl;
+}
+
 void oo_routine() {
 #if 0
     delegate_and_inheritance_constructor();
@@ -146,7 +178,8 @@ void oo_routine() {
     copy_elission();
 
     init_static_member();
-#endif
 
     reference_qualifier();
+#endif
+    derived_assignment_operator();
 }

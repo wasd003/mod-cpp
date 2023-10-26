@@ -15,6 +15,7 @@ void coro_main();
 
 int main() {
 
+    oo_routine();
 #if 0
     smart_pointer_routine();
 
@@ -23,8 +24,6 @@ int main() {
     misc_routine();
 
     auto_routine();
-
-    oo_routine();
 
     rvalue_routine();
     
@@ -35,6 +34,7 @@ int main() {
     lambda_routine();
 
     operator_rountine();
-#endif
+
     coro_main();
+#endif
 }

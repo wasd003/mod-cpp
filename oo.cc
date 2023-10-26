@@ -169,6 +169,24 @@ void derived_assignment_operator() {
     std::cout << b1 << std::endl;
 }
 
+void virtual_inheritence() {
+    class common_base {
+
+    };
+
+    class base_1 : virtual public common_base {
+
+    };
+
+    class base_2 : virtual public common_base {
+
+    };
+
+    class derived : public base_1, public base_2 {
+
+    };
+}
+
 void oo_routine() {
 #if 0
     delegate_and_inheritance_constructor();

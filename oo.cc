@@ -121,6 +121,22 @@ void init_static_member() {
     }
 }
 
+class widget {
+private:
+    A data;
+public:
+    A get_data() & {
+        return data;
+    }
+    A get_data() && {
+        return std::move(data);
+    }
+};
+
+void reference_qualifier() {
+    A data = widget().get_data();
+}
+
 void oo_routine() {
 #if 0
     delegate_and_inheritance_constructor();
@@ -128,7 +144,9 @@ void oo_routine() {
     explicit_override_virt_func();
 
     copy_elission();
-#endif
 
     init_static_member();
+#endif
+
+    reference_qualifier();
 }

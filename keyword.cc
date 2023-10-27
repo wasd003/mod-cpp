@@ -45,6 +45,14 @@ auto compute_at_compilation() {
     return is_primes;
 }
 
+void type_traits_example() {
+    const int x = 10;
+
+    static_assert(std::is_integral_v<decltype(x)>);
+
+    static_assert(std::is_same_v<int, std::remove_const_t<decltype(x)>>);
+}
+
 void keyword_routine() {
     /* mutable_example(); */
 
@@ -52,5 +60,7 @@ void keyword_routine() {
 
     /* non_typename_template<12>(); */
 
-    compute_at_compilation();
+    /* compute_at_compilation(); */
+
+    type_traits_example();
 }

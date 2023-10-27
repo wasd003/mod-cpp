@@ -1,3 +1,4 @@
+#include <concepts>
 #include <source_location>
 #include <modcpp/base.h>
 
@@ -35,10 +36,20 @@ decltype(auto) fold_sum(Ta first, Tb... args) {
     return (first + ... + args);
 }
 
+template<typename Ta, typename... Tb>
+bool equals_any(Ta val, Tb... args) {
+    return ((val == args) || ...);
+}
+
 void fold_expression() {
     fold_print("chs", 2, 3);
     std::cout << std::endl;
+
     std::cout << fold_sum(1, 2.2, 1);
+    std::cout << std::endl;
+
+    auto ret = equals_any(1, 10.2, 7,7, 1.0);
+    std::cout << (ret ? "true" : "false") << std::endl;
 }
 
 template<typename T, typename U>
@@ -142,6 +153,6 @@ void template_routine() {
 
     derived_template_example();
 
-    fold_expression();
 #endif
+    fold_expression();
 }

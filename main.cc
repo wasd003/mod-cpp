@@ -12,11 +12,13 @@ void smart_pointer_routine();
 void lambda_routine();
 void test_rng();
 void coro_main();
+void keyword_routine();
 
 int main() {
 
-    oo_routine();
 #if 0
+    oo_routine();
+
     smart_pointer_routine();
 
     template_routine();
@@ -37,4 +39,5 @@ int main() {
 
     coro_main();
 #endif
+    keyword_routine();
 }

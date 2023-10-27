@@ -9,7 +9,7 @@ struct test_struct {
     test_struct() = delete;
 };
 
-template<typename T, int N>
+template<typename T, auto N>
 class vec {
 private:
     /* stored on stack  */

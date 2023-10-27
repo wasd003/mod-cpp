@@ -54,7 +54,58 @@ void template_fold() {
     fold_print("chs", 2, 3);
 }
 
+template<typename T, typename U>
+class A {
+public:
+    A() {
+        std::cout << "no specialization" << std::endl;
+    }
+};
+
+template<typename U>
+class A<int, U> {
+public:
+    A() {
+        std::cout << "partial specialization" << std::endl;
+    }
+
+};
+
+template<>
+class A<int, char> {
+public:
+    A() {
+        std::cout << "full specialization" << std::endl;
+    }
+};
+
+void class_template_specialization() {
+    A<char, char> a1;
+    A<int, double> a2;
+    A<int, char> a3;
+}
+
+template<typename T>
+void tmpl_func() {
+    std::cout << "no specialization" << std::endl;
+}
+
+template<>
+void tmpl_func<char>() {
+    std::cout << "full specialization" << std::endl;
+}
+
+void func_template_specialization() {
+    tmpl_func<int>();
+    tmpl_func<char>();
+}
+
 void template_routine() {
+    class_template_specialization();
+
+    func_template_specialization();
+
+#if 0
     template_alias();
 
     variadic_template();
@@ -62,4 +113,5 @@ void template_routine() {
     non_type_template();
 
     template_fold();
+#endif
 }

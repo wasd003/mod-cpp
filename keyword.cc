@@ -55,6 +55,13 @@ void type_traits_example() {
     std::remove_const_t<decltype(x)> y = x;
 }
 
+void enum_class_example() {
+    enum class Color {
+        RED, GREEN, BLUE
+    };
+    auto x = Color::RED;
+}
+
 void keyword_routine() {
     /* mutable_example(); */
 
@@ -64,5 +71,5 @@ void keyword_routine() {
 
     /* compute_at_compilation(); */
 
-    type_traits_example();
+    /* type_traits_example(); */
 }

@@ -1,3 +1,4 @@
+#include <source_location>
 #include <modcpp/base.h>
 
 template<class T>
@@ -100,12 +101,53 @@ void func_template_specialization() {
     tmpl_func<char>();
 }
 
+template <typename T>
+class Base {
+public:
+    struct Nested {
+        int val;
+        Nested& operator+(const Nested& rhs) {
+            val += rhs.val;
+            return *this;
+        }
+        friend std::ostream& operator<<(std::ostream& os, const Nested& rhs) {
+            os << rhs.val;
+            return os;
+        }
+    };
+    void base_func() {
+        const auto &loc = std::source_location::current();
+        std::cout << loc.function_name() << ":" << loc.line() << std::endl;
+    }
+};
+
+template <typename T>
+class Derived : public Base<T> {
+public:
+    void derived_func() {
+        // 1. use function in template base class
+        this->base_func();
+
+        // 2. use nested type defined in template base class
+        using nested = typename Base<T>::Nested;
+        nested x = {1};
+        nested y = {3};
+        auto z = x + y;
+        std::cout << z << std::endl;
+    }
+};
+
+void derived_template_example() {
+    Derived<int> d;
+    d.derived_func();
+}
+
 void template_routine() {
+#if 0
     class_template_specialization();
 
     func_template_specialization();
 
-#if 0
     template_alias();
 
     variadic_template();
@@ -114,4 +156,5 @@ void template_routine() {
 
     template_fold();
 #endif
+    derived_template_example();
 }

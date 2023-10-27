@@ -51,6 +51,8 @@ void type_traits_example() {
     static_assert(std::is_integral_v<decltype(x)>);
 
     static_assert(std::is_same_v<int, std::remove_const_t<decltype(x)>>);
+    
+    std::remove_const_t<decltype(x)> y = x;
 }
 
 void keyword_routine() {

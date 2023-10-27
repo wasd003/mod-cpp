@@ -12,20 +12,6 @@ void template_alias() {
             std::cout << j << " " << std::endl;
 }
 
-template<typename T, typename... Ts>
-void custom_printf(T t0, Ts... ts) {
-    // | T     | t0       | sizeof    |
-    // | Ts... | ts.../ts | sizeof... |
-    std::cout << t0 << std::endl;
-    if constexpr (sizeof...(ts) > 0) {
-        custom_printf(ts...);
-    }
-}
-
-void variadic_template() {
-    custom_printf(1, "Hello", 0.5);
-}
-
 /* template<int param> is also ok */
 template<auto param>
 void speak() {
@@ -39,20 +25,20 @@ void non_type_template() {
     speak<100>();
 }
 
-template<typename... Ts>
-void fold_print(const Ts&... args) {
+template<typename... T>
+void fold_print(T... args) {
     ((std::cout << args << " "), ...);
 }
 
 template<typename Ta, typename... Tb>
-decltype(auto) fold_sum(const Ta& first, const Tb&... args) {
+decltype(auto) fold_sum(Ta first, Tb... args) {
     return (first + ... + args);
 }
 
-void template_fold() {
-    auto ans = fold_sum(1, 2, 3.5);
-    std::cout << ans << std::endl;
+void fold_expression() {
     fold_print("chs", 2, 3);
+    std::cout << std::endl;
+    std::cout << fold_sum(1, 2.2, 1);
 }
 
 template<typename T, typename U>
@@ -154,7 +140,8 @@ void template_routine() {
 
     non_type_template();
 
-    template_fold();
-#endif
     derived_template_example();
+
+    fold_expression();
+#endif
 }

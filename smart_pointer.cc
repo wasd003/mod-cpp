@@ -20,6 +20,27 @@ void weak_pointer() {
     }
 }
 
+void pass_unique_ptr_by_ref(std::unique_ptr<std::vector<int>>& vecp) {
+    vecp->push_back(1);
+}
+
+void pass_unique_ptr_by_value(std::unique_ptr<std::vector<int>> vecp) {
+    vecp->push_back(2);
+    auto& vec = *vecp;
+    for (auto &i : vec) {
+        std::cout << i << " " << std::endl;
+    }
+}
+
+void pass_unique_ptr_example() {
+    auto vecp = std::make_unique<std::vector<int>>();
+    vecp->push_back(10);
+    pass_unique_ptr_by_ref(vecp);
+    pass_unique_ptr_by_value(std::move(vecp));
+    assert(vecp.get() == nullptr);
+}
+
 void smart_pointer_routine() {
-    weak_pointer();
+    pass_unique_ptr_example();
+    /* weak_pointer(); */
 }

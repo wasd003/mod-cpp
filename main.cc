@@ -15,13 +15,12 @@ void coro_main();
 void keyword_routine();
 
 int main() {
-    template_routine();
-
-#if 0
-    oo_routine();
 
     smart_pointer_routine();
+#if 0
+    template_routine();
 
+    oo_routine();
 
     misc_routine();
 

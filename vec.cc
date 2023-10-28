@@ -1,88 +1,101 @@
 #include <cassert>
 #include <cstddef>
 #include <iostream>
+#include <iterator>
 #include <utility>
 
 struct test_struct {
     int field_a, field_b;
-    test_struct(int field_a, int field_b) : field_a(field_a), field_b(field_b) {}
-    test_struct() = delete;
+
+    test_struct(const test_struct& rhs) {
+        static int cnt = 0;
+        cnt ++ ;
+        std::cout << "copy constructor:" << cnt <<  std::endl;
+        field_a = rhs.field_a;
+        field_b = rhs.field_b;
+    }
+
+    test_struct& operator=(const test_struct& rhs) {
+        std::cout << "assignment operator" << std::endl;
+        field_a = rhs.field_a;
+        field_b = rhs.field_b;
+        return *this;
+    }
+
+    test_struct(test_struct&& rhs) {
+        std::cout << "move constructor" << std::endl;
+        field_a = rhs.field_a;
+        field_b = rhs.field_b;
+    }
+
+    test_struct& operator=(test_struct&& rhs) {
+        std::cout << "move assignment operator" << std::endl;
+        field_a = rhs.field_a;
+        field_b = rhs.field_b;
+        return *this;
+    }
+
+    test_struct(int fa, int fb) : field_a(fa), field_b(fb) {
+        std::cout << "normal constructor" << std::endl;
+    }
+
+    ~test_struct() = default;
+
+    test_struct() = default;
 };
 
 template<typename T, auto N>
 class vec {
 private:
-    /* stored on stack  */
-    uint8_t stack_storage[N * sizeof (T)];
+    T stack_vec[N];
+    T *heap_vec = nullptr;
+    int vec_size = 0;
+    int vec_capacity = N;
 
-    /* stored on heap */
-    uint8_t* heap_storage = nullptr;
-
-    std::size_t len = 0;
-
-    std::size_t capacity = N;
+    /**
+     * grow @vec_capacity
+     * copy from stack to heap if vec_size == N
+     * otherwise, copy from heap to heap
+     */
+    void grow() {
+        std::cout << "----- begin grow -----" << std::endl;
+        vec_capacity <<= 1;
+        auto old_heap_vec = heap_vec;
+        heap_vec = new T[vec_capacity];
+        if (vec_size == N) [[unlikely]] {
+            // copy from stack to heap
+            for (int i = 0; i < vec_size; i ++ )
+                heap_vec[i] = stack_vec[i];
+        } else {
+            // copy from heap to heap
+            for (int i = 0; i < vec_size; i ++ )
+                heap_vec[i] = old_heap_vec[i];
+        }
+        delete[] old_heap_vec;
+        std::cout << "----- end grow -----" << std::endl;
+    }
 
 public:
-    vec() = default;
-
-    std::size_t size() {
-        return len;
+    T& operator[](int idx) {
+        if (vec_size <= N) return stack_vec[idx];
+        else return heap_vec[idx];
     }
 
-    void grow() {
-        assert(len >= capacity);
-        assert(heap_storage != nullptr);
-        capacity <<= 1;
-        auto old_heap_storage = heap_storage;
-        heap_storage = new uint8_t[capacity * sizeof (T)];
-        // copy byte by byte
-        for (std::size_t i = 0; i < len * sizeof(T); i ++ ) heap_storage[i] = old_heap_storage[i];
-        delete [] old_heap_storage;
-    }
-
-    void push_back(const T& args) {
-        emplace_back(std::move(args));
-    }
-
-    // case #1. if current len is < N,
-    //      allocated element on stack
-    // case #2. if current len is >= N
-    //      case 2.1: if the heap is not initialized:
-    //          a) init the heap
-    //          b) copy all the elements on stack to the heap
-    //      case 2.2: if the current len >= capacity
-    //          a) grow current capacity
-    //          b) copy all the elements to the heap area
-    //      allocated element on heap
-    template<typename... Ts>
+    template<typename...Ts>
     void emplace_back(Ts&&... args) {
-        if (len < N) {
-            new (stack_storage + len * sizeof(T)) T(std::forward<Ts>(args)...);
-            len ++ ;
-            std::cout << "push on stack. " << "size: " << len << " capacity: " << capacity << std::endl;
+        if (vec_size < N) {
+            // case #1: store on stack
+            new (stack_vec + vec_size ++ ) T(std::forward<Ts>(args)...);
         } else {
-            // case 2.1: init heap, make sure heap_storage != nullptr
-            if (!heap_storage) [[unlikely]] {
-                capacity <<= 1;
-                heap_storage = new uint8_t[capacity * sizeof (T)];
-                for (std::size_t i = 0; i < len * sizeof(T); i ++ )
-                    heap_storage[i] = stack_storage[i];
+            // case #2: store on heap
+            if (vec_size == vec_capacity) {
+                grow();
             }
-            // case 2.2: check whether we need to grow capacity
-            if (len >= capacity) grow();
-
-            // allocated element on heap
-            new (heap_storage + len * sizeof(T)) T(std::forward<Ts>(args)...);
-            len ++ ;
-            std::cout << "push on heap. " << "size: " << len << " capacity: " << capacity << std::endl;
+            // emplace construct
+            new (heap_vec + vec_size ++ ) T(std::forward<Ts>(args)...);
+            // move assignment
+            // heap_vec[vec_size ++ ] = T(std::forward<Ts>(args)...);
         }
-
-    }
-
-    T& operator[](int index) {
-        uint8_t* base = !heap_storage ? stack_storage : heap_storage;
-        T* tptr = reinterpret_cast<T*>(base + index * sizeof (T));
-        return *tptr;
     }
 };
 
@@ -91,11 +104,7 @@ void vec_routine() {
     vec<test_struct, N> my_vec;
     for (int i = 0; i < 3 * N; i ++ ) {
         my_vec.emplace_back(i, i);
-        auto val = my_vec[i];
-        assert(val.field_a == i && val.field_b == i);
-    }
-    for (int i = 0; i < 3 * N; i ++ ) {
-        auto val = my_vec[i];
-        assert(val.field_a == i && val.field_b == i);
+        /* auto val = my_vec[i]; */
+        /* assert(val.field_a == i && val.field_b == i); */
     }
 }

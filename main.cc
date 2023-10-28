@@ -16,11 +16,15 @@ void keyword_routine();
 void exception_routine();
 void design_pattern_routine();
 void linked_list_routine();
+void vec_routine();
 
 int main() {
 
-    linked_list_routine();
+    vec_routine();
+
 #if 0
+    linked_list_routine();
+
     design_pattern_routine();
 
     exception_routine();

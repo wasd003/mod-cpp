@@ -14,11 +14,14 @@ void test_rng();
 void coro_main();
 void keyword_routine();
 void exception_routine();
+void design_pattern_routine();
 
 int main() {
 
-    exception_routine();
+    design_pattern_routine();
 #if 0
+    exception_routine();
+
     lambda_routine();
 
     smart_pointer_routine();

@@ -15,11 +15,14 @@ void coro_main();
 void keyword_routine();
 void exception_routine();
 void design_pattern_routine();
+void linked_list_routine();
 
 int main() {
 
-    design_pattern_routine();
+    linked_list_routine();
 #if 0
+    design_pattern_routine();
+
     exception_routine();
 
     lambda_routine();

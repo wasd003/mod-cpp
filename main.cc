@@ -16,8 +16,11 @@ void keyword_routine();
 
 int main() {
 
-    smart_pointer_routine();
+    lambda_routine();
+
 #if 0
+    smart_pointer_routine();
+
     template_routine();
 
     oo_routine();
@@ -31,8 +34,6 @@ int main() {
     lockless_stack_routine();
 
     future_routine();
-
-    lambda_routine();
 
     operator_rountine();
 

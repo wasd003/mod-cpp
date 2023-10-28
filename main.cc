@@ -13,12 +13,14 @@ void lambda_routine();
 void test_rng();
 void coro_main();
 void keyword_routine();
+void exception_routine();
 
 int main() {
 
+    exception_routine();
+#if 0
     lambda_routine();
 
-#if 0
     smart_pointer_routine();
 
     template_routine();

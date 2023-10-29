@@ -63,8 +63,17 @@ void packaged_task_example() {
     }
 }
 
+void async_example() {
+    auto future = std::async([]() {
+            return 42;
+    });
+    std::cout << future.get() << std::endl;
+}
+
 void future_routine() {
     /* promise_example(); */
 
-    packaged_task_example();
+    /* packaged_task_example(); */
+
+    async_example();
 }

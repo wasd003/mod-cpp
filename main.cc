@@ -18,12 +18,15 @@ void exception_routine();
 void design_pattern_routine();
 void linked_list_routine();
 void vec_routine();
+void parallel_computing_routine();
 
 int main() {
 
-    lockless_queue_routine();
+    parallel_computing_routine();
 
 #if 0
+    lockless_queue_routine();
+    
     lockless_stack_routine();
 
     future_routine();

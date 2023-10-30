@@ -6,6 +6,7 @@
 #include <modcpp/base.h>
 
 
+#if 0
 constexpr static int N = 1000, worker_nr = 12;
 
 struct task {
@@ -83,3 +84,6 @@ void parallel_computing_routine() {
         std::cout << std::endl;
     }
 }
+#else
+void parallel_computing_routine() {}
+#endif

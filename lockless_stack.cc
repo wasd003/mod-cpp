@@ -44,7 +44,7 @@ public:
     }
 };
 
-void single_thread_test() {
+static void single_thread_test() {
     lockless_stack<int> stk;
     std::stack<int> pair_stk;
     for (int i = 0; i < 10; i ++ ) {
@@ -59,7 +59,7 @@ void single_thread_test() {
     }
 }
 
-void multi_thread_test() {
+static void multi_thread_test() {
     lockless_stack<int> stk;
     vector<std::thread> producer_list, consumer_list;
     constexpr static int thread_nr = 10;

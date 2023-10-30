@@ -6,6 +6,7 @@ void template_routine();
 void oo_routine();
 void rvalue_routine();
 void lockless_stack_routine();
+void lockless_queue_routine();
 void future_routine();
 void operator_rountine();
 void smart_pointer_routine();
@@ -20,9 +21,11 @@ void vec_routine();
 
 int main() {
 
-    lockless_stack_routine();
+    lockless_queue_routine();
 
 #if 0
+    lockless_stack_routine();
+
     future_routine();
 
     vec_routine();
@@ -47,7 +50,6 @@ int main() {
 
     rvalue_routine();
     
-
     operator_rountine();
 
     coro_main();

@@ -20,9 +20,11 @@ void vec_routine();
 
 int main() {
 
+    lockless_stack_routine();
 
-    future_routine();
 #if 0
+    future_routine();
+
     vec_routine();
 
     linked_list_routine();
@@ -45,8 +47,6 @@ int main() {
 
     rvalue_routine();
     
-    lockless_stack_routine();
-
 
     operator_rountine();
 

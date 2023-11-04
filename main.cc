@@ -21,11 +21,14 @@ void vec_routine();
 void parallel_computing_routine();
 void bounded_queue_routine();
 void h2o_generator();
+void jthread_routine();
 
 int main() {
 
-    h2o_generator();
+    jthread_routine();
 #if 0
+    h2o_generator();
+
     bounded_queue_routine();
 
     parallel_computing_routine();

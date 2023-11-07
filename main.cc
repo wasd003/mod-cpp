@@ -23,11 +23,13 @@ void bounded_queue_routine();
 void h2o_generator();
 void jthread_routine();
 void cow_routine();
+void static_member_rountine();
 
 int main() {
 
-    cow_routine();
+    static_member_rountine();
 #if 0
+    cow_routine();
     jthread_routine();
     h2o_generator();
 

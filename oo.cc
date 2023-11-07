@@ -187,7 +187,25 @@ void virtual_inheritence() {
     };
 }
 
+class TestClass {
+public:
+    int a, b, c;
+    explicit TestClass(int a, int b, int c) : a(a), b(b), c(c) {}
+    explicit operator int() {
+        return a;
+    }
+};
+
+void explicit_example() {
+    TestClass a {1, 2, 3};
+    TestClass b = TestClass {1, 2, 3};
+    // TestClass c = {1, 2, 3}; // ERROR
+    int v = int(a);
+    // int w = a; // ERROR
+}
+
 void oo_routine() {
+    explicit_example();
 #if 0
     delegate_and_inheritance_constructor();
 
@@ -198,6 +216,7 @@ void oo_routine() {
     init_static_member();
 
     reference_qualifier();
-#endif
+
     derived_assignment_operator();
+#endif
 }

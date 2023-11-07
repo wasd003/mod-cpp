@@ -22,11 +22,13 @@ void parallel_computing_routine();
 void bounded_queue_routine();
 void h2o_generator();
 void jthread_routine();
+void cow_routine();
 
 int main() {
 
-    jthread_routine();
+    cow_routine();
 #if 0
+    jthread_routine();
     h2o_generator();
 
     bounded_queue_routine();

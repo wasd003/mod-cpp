@@ -24,11 +24,13 @@ void h2o_generator();
 void jthread_routine();
 void cow_routine();
 void static_member_rountine();
+void shared_pointer_routine();
 
 int main() {
 
-    static_member_rountine();
+    shared_pointer_routine();
 #if 0
+    static_member_rountine();
     cow_routine();
     jthread_routine();
     h2o_generator();

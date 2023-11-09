@@ -1,6 +1,8 @@
+#include <memory>
 #include <modcpp/base.h>
 #include <cassert>
 #include <source_location>
+#include <set>
 
 template<typename... Ts>
 void print(const Ts&... args) {
@@ -22,12 +24,17 @@ static void do_trace(const std::source_location& loc = std::source_location::cur
  */
 
 template<typename T>
+class weak_pointer;
+
+template<typename T>
 class shared_pointer {
 private:
     struct shared_pointer_metadata {
         int refcnt;
         shared_pointer_metadata() : refcnt(1) {}
     };
+
+    std::set<weak_pointer<T> *> weak_ptr_set;
 
     shared_pointer_metadata *metadata;
     T *data;
@@ -45,6 +52,8 @@ private:
     }
 
 public:
+    shared_pointer() : data(nullptr), metadata(nullptr)  {}
+
     shared_pointer(T *data) : data(data), metadata(new shared_pointer_metadata()) {}
 
     shared_pointer(const shared_pointer<T> &rhs) : data(rhs.data), metadata(rhs.metadata) {
@@ -73,8 +82,22 @@ public:
         return *this;
     }
 
+    void cancel_subscription(weak_pointer<T>* wp) {
+        weak_ptr_set.erase(wp);
+    }
+
+    void add_subscription(weak_pointer<T>* wp) {
+        weak_ptr_set.insert(wp);
+    }
+
     ~shared_pointer() {
         decrease_current_refcnt();
+
+        while (weak_ptr_set.size()) {
+            auto cur = *weak_ptr_set.begin();
+            cur->reset();
+            weak_ptr_set.erase(cur);
+        }
     }
 
     T* operator->() {
@@ -83,6 +106,10 @@ public:
 
     T& operator*() {
         return *data;
+    }
+
+    operator bool() {
+        return data != nullptr && metadata != nullptr;
     }
 
     // used for debug and test only
@@ -98,7 +125,45 @@ struct test_struct {
     test_struct() : field_a(42), field_b(24) {}
 };
 
-void shared_pointer_routine() {
+
+/**
+ * 1. init: construct from shared_pointer. do not change refcnt
+ * 2. copy constructor / copy assignment operator: construct from shared_pointer
+ * 2. lock(): get shared_pointer if 
+ * 3. expired: test whether shared pointer expired
+ *
+ */
+template<typename T>
+class weak_pointer {
+private:
+    shared_pointer<T> *shared_ptr;
+
+public:
+    weak_pointer() : shared_ptr(nullptr) {}
+
+    weak_pointer(shared_pointer<T>& rhs) : shared_ptr(&rhs) {
+        shared_ptr->add_subscription(*this);
+    }
+
+    shared_pointer<T> lock() {
+        if (shared_ptr) return *shared_ptr;
+        return shared_pointer<T>();
+    }
+
+    weak_pointer<T>& operator=(shared_pointer<T>& rhs) {
+        if (shared_ptr != nullptr) shared_ptr->cancel_subscription(this);
+        shared_ptr = &rhs;
+        shared_ptr->add_subscription(this);
+        return *this;
+    }
+
+    void reset() {
+        shared_ptr = nullptr;
+        do_trace();
+    }
+};
+
+void test_shared_pointer() {
     test_struct *rawpointer = new test_struct();
     shared_pointer<test_struct> sp(rawpointer);
     auto sp2 = sp; // 1. test copy constructor
@@ -122,5 +187,26 @@ void shared_pointer_routine() {
     (*sp).field_a = 20;
     assert(sp->field_a == 20);
 
-    print("Pass All Test :)");
+    print("Pass Shared Pointer Test :)");
+
+}
+
+void test_weak_pointer() {
+    weak_pointer<test_struct> wp;
+    assert(!wp.lock());
+    {
+        test_struct *rawpointer = new test_struct();
+        shared_pointer<test_struct> sp(rawpointer);
+        wp = sp;
+        assert(wp.lock());
+        assert(wp.lock()->field_a == 42 && wp.lock()->field_b == 24);
+    }
+    assert(!wp.lock());
+
+    print("Pass Weak Pointer Test :)");
+}
+
+void shared_pointer_routine() {
+    // test_shared_pointer();
+    test_weak_pointer();
 }

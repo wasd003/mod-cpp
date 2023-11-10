@@ -29,10 +29,12 @@ void unique_ptr_routine();
 void iterator_rountine();
 void virt_func_routine();
 void string_routine();
+void object_pool_routine();
 
 int main() {
-    string_routine();
+    object_pool_routine();
 #if 0
+    string_routine();
     virt_func_routine();
     iterator_rountine();
     unique_ptr_routine();

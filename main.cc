@@ -28,11 +28,12 @@ void shared_pointer_routine();
 void unique_ptr_routine();
 void iterator_rountine();
 void virt_func_routine();
+void string_routine();
 
 int main() {
-
-    virt_func_routine();
+    string_routine();
 #if 0
+    virt_func_routine();
     iterator_rountine();
     unique_ptr_routine();
     shared_pointer_routine();

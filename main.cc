@@ -26,10 +26,13 @@ void cow_routine();
 void static_member_rountine();
 void shared_pointer_routine();
 void unique_ptr_routine();
+void iterator_rountine();
 
 int main() {
-    unique_ptr_routine();
+
+    iterator_rountine();
 #if 0
+    unique_ptr_routine();
     shared_pointer_routine();
     static_member_rountine();
     cow_routine();

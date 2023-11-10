@@ -25,11 +25,12 @@ void jthread_routine();
 void cow_routine();
 void static_member_rountine();
 void shared_pointer_routine();
+void unique_ptr_routine();
 
 int main() {
-
-    shared_pointer_routine();
+    unique_ptr_routine();
 #if 0
+    shared_pointer_routine();
     static_member_rountine();
     cow_routine();
     jthread_routine();

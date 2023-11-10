@@ -35,6 +35,12 @@ public:
             return old;
         }
 
+        iterator operator--(int) {
+            auto old = *this;
+            idx -- ;
+            return old;
+        }
+
         T* operator->() {
             return &self->data[idx];
         }
@@ -50,6 +56,30 @@ public:
         bool operator!=(const iterator& rhs) const {
             return idx != rhs.idx || self != rhs.self;
         }
+
+        iterator operator-(int delta) {
+            auto res = *this;
+            res.idx -= delta;
+            return res;
+        }
+
+        iterator operator+(int delta) {
+            auto res = *this;
+            res.idx += delta;
+            return res;
+        }
+
+        bool operator<(const iterator& rhs) const {
+            return idx < rhs.idx;
+        }
+
+        bool operator<=(const iterator& rhs) const {
+            return idx < rhs.idx;
+        }
+
+        bool operator>=(const iterator& rhs) const {
+            return idx >= rhs.idx;
+        }
     };
 
     iterator begin() {
@@ -61,14 +91,37 @@ public:
     }
 };
 
+template<typename Iterator>
+void ministl_sort(Iterator&& begin, Iterator&& end) {
+    if (begin >= end - 1) return;
+    auto left = begin - 1, right = end;
+    const auto pivot = *begin;
+
+    while (left < right) {
+        do left ++ ; while (*left < pivot);
+        do right -- ; while (*right > pivot);
+        if (left < right) std::swap(*left, *right);
+    }
+
+    right ++ ;
+    ministl_sort(begin, right);
+    ministl_sort(right, end);
+}
+
 void iterator_rountine() {
     Array<int, 10> arr;
-    auto iter = arr.begin();
-    *iter = 10;
-    int i = 0;
+    int i = 10;
     for (auto it = arr.begin(); it != arr.end(); it ++ ) {
-        print("i:", i);
-        *iter = i;
-        i ++ ;
+        *it = i;
+        i -- ;
+    }
+
+    for (auto it = arr.begin(); it != arr.end(); it ++ ) {
+        print(*it);
+    }
+    print();
+    ministl_sort(arr.begin(), arr.end());
+    for (auto it = arr.begin(); it != arr.end(); it ++ ) {
+        print(*it);
     }
 }

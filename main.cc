@@ -27,11 +27,13 @@ void static_member_rountine();
 void shared_pointer_routine();
 void unique_ptr_routine();
 void iterator_rountine();
+void virt_func_routine();
 
 int main() {
 
-    iterator_rountine();
+    virt_func_routine();
 #if 0
+    iterator_rountine();
     unique_ptr_routine();
     shared_pointer_routine();
     static_member_rountine();

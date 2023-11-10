@@ -43,7 +43,6 @@ private:
         if (!data) return;
         assert(metadata);
         if ( -- metadata->refcnt == 0) {
-            do_trace();
             delete data;
             data = nullptr;
             delete metadata;
@@ -142,7 +141,7 @@ public:
     weak_pointer() : shared_ptr(nullptr) {}
 
     weak_pointer(shared_pointer<T>& rhs) : shared_ptr(&rhs) {
-        shared_ptr->add_subscription(*this);
+        shared_ptr->add_subscription(this);
     }
 
     shared_pointer<T> lock() {
@@ -159,7 +158,12 @@ public:
 
     void reset() {
         shared_ptr = nullptr;
-        do_trace();
+    }
+
+    ~weak_pointer() {
+        if (shared_ptr) {
+            shared_ptr->cancel_subscription(this);
+        }
     }
 };
 
@@ -192,6 +196,7 @@ void test_shared_pointer() {
 }
 
 void test_weak_pointer() {
+    // shared pointer dies before weak pointer
     weak_pointer<test_struct> wp;
     assert(!wp.lock());
     {
@@ -203,6 +208,13 @@ void test_weak_pointer() {
     }
     assert(!wp.lock());
 
+    // weak pointer dies before shared pointer
+
+    test_struct *rawpointer = new test_struct();
+    auto sp = shared_pointer<test_struct> (rawpointer);
+    {
+        auto wp = weak_pointer<test_struct> (sp);
+    }
     print("Pass Weak Pointer Test :)");
 }
 

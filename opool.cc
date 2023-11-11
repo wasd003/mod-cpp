@@ -10,9 +10,13 @@ void print(const Ts&... args) {
     std::cout << std::endl;
 }
 
-static void do_trace(const std::source_location&loc = std::source_location::current()) {
-    print(loc.function_name(), ":", loc.line());
-}
+struct Foo {
+    int field_a, field_b;
+    friend std::ostream& operator<<(std::ostream& os, const Foo &rhs) {
+        os << rhs.field_a << " " << rhs.field_b;
+        return os;
+    }
+};
 
 /**
  * @NodeCapacity: how many objects MemoryNode holds
@@ -93,7 +97,6 @@ public:
 
     /* []    [a] */
     /* a     b */
-
     template<typename... Ts>
     T* New(Ts&&... args) {
         if (free_list) [[likely]] {
@@ -128,15 +131,8 @@ public:
     ~ObjectPool() {}
 };
 
-struct Foo {
-    int field_a, field_b;
-    friend std::ostream& operator<<(std::ostream& os, const Foo &rhs) {
-        os << rhs.field_a << " " << rhs.field_b;
-        return os;
-    }
-};
 
-void opool_routine() {
+void object_pool_routine() {
     ObjectPool<Foo> pool;
 
     std::vector<Foo*> vec;

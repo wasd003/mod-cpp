@@ -30,10 +30,13 @@ void iterator_rountine();
 void virt_func_routine();
 void string_routine();
 void object_pool_routine();
+void memory_allocator_routine();
+void test_routine();
 
 int main() {
-    object_pool_routine();
+    memory_allocator_routine();
 #if 0
+    object_pool_routine();
     string_routine();
     virt_func_routine();
     iterator_rountine();

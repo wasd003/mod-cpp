@@ -35,8 +35,9 @@ void test_routine();
 void heap_routine();
 
 int main() {
-    lockless_stack_routine();
+    lockless_queue_routine();
 #if 0
+    lockless_stack_routine();
     object_pool_routine();
     string_routine();
     virt_func_routine();
@@ -52,7 +53,6 @@ int main() {
 
     parallel_computing_routine();
 
-    lockless_queue_routine();
     
     lockless_stack_routine();
 

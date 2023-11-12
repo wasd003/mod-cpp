@@ -35,7 +35,7 @@ void test_routine();
 void heap_routine();
 
 int main() {
-    heap_routine();
+    lockless_stack_routine();
 #if 0
     object_pool_routine();
     string_routine();

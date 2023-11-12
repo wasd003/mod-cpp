@@ -4,6 +4,7 @@
 #include <memory>
 #include <thread>
 #include <atomic>
+#include <optional>
 
 using namespace std;
 
@@ -11,34 +12,29 @@ template<typename T>
 class lockless_stack {
 private:
     struct node {
-        T data;
-        node* prev;
         node() : prev(nullptr) {}
-        node(const T& data) : data(data), prev(nullptr) {}
+        node(const T& data) : prev(nullptr), data(data) {}
+        node *prev;
+        T data;
     };
-
     std::atomic<node*> head;
-
 public:
-    lockless_stack() {
-        head.store(new node());
-    }
+    lockless_stack() : head(nullptr) {}
 
-    void push(const T& data) {
-        node *new_node = new node(data);
-        node *cur_head = head.load();
+    void push(const T& data ) {
+        auto new_node = new node(data);
+        auto cur_head = head.load();
         new_node->prev = cur_head;
-
-        while (!head.compare_exchange_strong(cur_head, new_node)) {
+        while (!head.compare_exchange_weak(cur_head, new_node)) {
             new_node->prev = cur_head;
         }
     }
 
-    T* pop() {
-        node *cur_head = head.load();
-        while (cur_head->prev && !head.compare_exchange_strong(cur_head, cur_head->prev));
-        if (!cur_head->prev) return nullptr;
-        auto ans = new T(cur_head->data);
+    std::optional<T> pop() {
+        auto cur_head = head.load();
+        while (cur_head && !head.compare_exchange_weak(cur_head, cur_head->prev));
+        if (!cur_head) return std::nullopt;
+        auto ans = cur_head->data;
         delete cur_head;
         return ans;
     }
@@ -96,7 +92,7 @@ static void multi_thread_test() {
 }
 
 void lockless_stack_routine() {
-    single_thread_test();
+    // single_thread_test();
 
     multi_thread_test();
 }

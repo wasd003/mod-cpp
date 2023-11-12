@@ -32,9 +32,10 @@ void string_routine();
 void object_pool_routine();
 void memory_allocator_routine();
 void test_routine();
+void heap_routine();
 
 int main() {
-    memory_allocator_routine();
+    heap_routine();
 #if 0
     object_pool_routine();
     string_routine();

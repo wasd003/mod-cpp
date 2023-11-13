@@ -35,10 +35,12 @@ void test_routine();
 void heap_routine();
 void lockless_queue_routine();
 void fold_routine();
+void hash_table_routine();
 
 int main() {
-    fold_routine();
+    hash_table_routine();
 #if 0
+    fold_routine();
     lockless_stack_routine();
     object_pool_routine();
     string_routine();

@@ -33,9 +33,11 @@ void object_pool_routine();
 void memory_allocator_routine();
 void test_routine();
 void heap_routine();
+void lockless_queue_routine();
+void fold_routine();
 
 int main() {
-    lockless_queue_routine();
+    fold_routine();
 #if 0
     lockless_stack_routine();
     object_pool_routine();

@@ -36,10 +36,13 @@ void heap_routine();
 void lockless_queue_routine();
 void fold_routine();
 void hash_table_routine();
+void coroutine_test();
 
 int main() {
-    hash_table_routine();
+    coroutine_test();
+    /* test_routine(); */
 #if 0
+    hash_table_routine();
     fold_routine();
     lockless_stack_routine();
     object_pool_routine();

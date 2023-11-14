@@ -3,11 +3,16 @@
 #include <cassert>
 #include <ostream>
 #include <source_location>
+#include <list>
 
 template<typename... Ts>
 void print(const Ts&... args) {
     ((std::cout << args), ...);
     std::cout << std::endl;
+}
+
+static void do_trace(const std::source_location& loc = std::source_location::current()) {
+    print(loc.function_name(), ":", loc.line());
 }
 
 struct Foo {
@@ -16,119 +21,82 @@ struct Foo {
         os << rhs.field_a << " " << rhs.field_b;
         return os;
     }
+    Foo(int fa, int fb) : field_a(fa), field_b(fb) {}
+    Foo() = default;
 };
 
 /**
- * @NodeCapacity: how many objects MemoryNode holds
+ * NodeCapacity: how many objs does node hold
  */
-template<typename T, size_t NodeCapacity = 4, size_t MaxNodeNr = 1024>
+template<typename T, auto NodeCapacity = 4>
 class ObjectPool {
 private:
     struct MemoryNode {
-    private:
-        uint8_t *mem;
-        uint8_t *current;
-    public:
+        T* mem;
+        int cur_free_idx;
+        MemoryNode() : mem(new T[NodeCapacity]), cur_free_idx(0) {}
         MemoryNode(const MemoryNode& rhs) = delete;
-        MemoryNode& operator=(const MemoryNode& rhs) = delete;
-        MemoryNode(MemoryNode&& rhs) : mem(rhs.mem), current(rhs.current) {
-            rhs.mem = rhs.current = nullptr;
+        MemoryNode operator=(const MemoryNode& rhs) = delete;
+        MemoryNode& operator=(MemoryNode&& rhs) = delete;
+        MemoryNode(MemoryNode&& rhs) : mem(rhs.mem), cur_free_idx(rhs.cur_free_idx) {
+            rhs.mem = nullptr;
+            rhs.cur_free_idx = 0;
         }
-        MemoryNode& operator=(MemoryNode&& rhs) {
-            assert(this != &rhs);
-            mem = rhs.mem;
-            current = rhs.current;
-            rhs.mem = rhs.current = nullptr;
-            return *this;
+        bool full() {
+            return cur_free_idx >= NodeCapacity;
         }
-        MemoryNode() : mem(new uint8_t[node_size()]), current(mem) {}
-        constexpr size_t get_chunk_size() {
-            return sizeof (T) + sizeof (uint8_t *);
-        }
-        constexpr size_t node_size() {
-            return get_chunk_size() * NodeCapacity;
-        }
-        bool has_free_space() {
-            assert((current - mem) % get_chunk_size() == 0);
-            return current < mem + node_size();
-        }
-        uint8_t *allocate_memory() {
-            assert(has_free_space());
-            auto res = current;
-            current += get_chunk_size();
-            return res;
+        T *allocate() {
+            assert(!full());
+            auto ans = &mem[cur_free_idx];
+            cur_free_idx ++ ;
+            return ans;
         }
         ~MemoryNode() {
+            do_trace();
             delete[] mem;
-            mem = current = nullptr;
         }
     };
-    std::vector<MemoryNode> memory_node_list;
-    uint8_t **free_list;
 
-    uint8_t *to_object(uint8_t *ptr) {
-        return ptr + sizeof (uint8_t *);
+    /**
+     * allocate raw memory
+     */
+    T *allocate() {
+        // 1. try to allocated from free list
+        if (freelist.size()) {
+            auto res = freelist.front();
+            freelist.pop_front();
+            return res;
+        }
+
+        // 2. if free list is empty, try to allocate from latest node
+        assert(mem_node_list.size());
+        if (mem_node_list.back().full()) {
+            mem_node_list.emplace_back();
+        }
+        return mem_node_list.back().allocate();
     }
 
-    uint8_t **to_rawmemory(T *obj) {
-        uint8_t *mem = reinterpret_cast<uint8_t *>(obj);
-        mem -= sizeof (uint8_t *);
-        return reinterpret_cast<uint8_t **>(mem);
-    }
+    std::vector<MemoryNode> mem_node_list;
 
-    void create_memory_node() {
-        memory_node_list.emplace_back();
-    }
-
-    MemoryNode& get_lasted_node() {
-        assert(memory_node_list.size());
-        return memory_node_list.back();
-    }
+    std::list<T*> freelist;
 
 public:
-    ObjectPool() : free_list(nullptr) {
-        create_memory_node();
+    ObjectPool() {
+        mem_node_list.emplace_back();
     }
 
-    ObjectPool(const ObjectPool<T, NodeCapacity>& rhs) = delete;
-    ObjectPool(ObjectPool<T, NodeCapacity>&& rhs) = delete;
-    ObjectPool& operator=(const ObjectPool<T, NodeCapacity>& rhs) = delete;
-    ObjectPool& operator=(ObjectPool<T, NodeCapacity>&& rhs) = delete;
-
-    /* []    [a] */
-    /* a     b */
-    template<typename... Ts>
-    T* New(Ts&&... args) {
-        if (free_list) [[likely]] {
-            uint8_t *prev = *free_list;
-            uint8_t *obj = to_object(reinterpret_cast<uint8_t*>(free_list));
-            new(obj) T(std::forward<Ts>(args)...);
-            free_list = reinterpret_cast<uint8_t**>(prev);
-            return reinterpret_cast<T*>(obj);
-        }
-
-        if (!get_lasted_node().has_free_space()) [[unlikely]] {
-            // no memory on freelist
-            create_memory_node();
-        }
-        auto &node = get_lasted_node();
-        assert(node.has_free_space());
-        uint8_t *mem = node.allocate_memory();
-        uint8_t *obj = to_object(mem);
-        new(obj) T(std::forward<Ts>(args)...);
-        auto ans = reinterpret_cast<T*>(obj);
-        return ans;
+    template<typename... Args>
+    T *New(Args&&... args) {
+        T *raw_mem = allocate();
+        new (raw_mem) T(std::forward<Args>(args)...);
+        return raw_mem;
     }
 
-    void Release(T* obj) {
+    void Release(T *obj) {
         obj->~T();
-        uint8_t **mem = to_rawmemory(obj);
-        *(mem) = reinterpret_cast<uint8_t*>(free_list);
-        free_list = mem;
+        freelist.push_back(obj);
     }
 
-    // TODO: need to destruct all the object which has been allocated
-    ~ObjectPool() {}
 };
 
 

@@ -39,13 +39,13 @@ void hash_table_routine();
 void coroutine_test();
 
 int main() {
-    coroutine_test();
+    /* coroutine_test(); */
     /* test_routine(); */
+    object_pool_routine();
 #if 0
     hash_table_routine();
     fold_routine();
     lockless_stack_routine();
-    object_pool_routine();
     string_routine();
     virt_func_routine();
     iterator_rountine();

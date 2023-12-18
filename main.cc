@@ -37,11 +37,13 @@ void lockless_queue_routine();
 void fold_routine();
 void hash_table_routine();
 void coroutine_test();
+void ro5_routine();
 
 int main() {
+    ro5_routine();
     /* coroutine_test(); */
     /* test_routine(); */
-    object_pool_routine();
+    /* object_pool_routine(); */
 #if 0
     hash_table_routine();
     fold_routine();
